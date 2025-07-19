@@ -1,0 +1,174 @@
+/* === COLOR VARIABLES === */
+:root {
+  --pink-soft: #ffc1e3;
+  --purple-light: #e5ccff;
+  --mint: #ccf5e1;
+  --yellow-light: #fff7cc;
+  --sky-light: #ccf0ff;
+}
+
+/* === GLOBAL STYLE === */
+body {
+  font-family: "Fredoka", sans-serif;
+  background: linear-gradient(135deg, var(--pink-soft), var(--sky-light));
+  color: #333;
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+}
+
+/* === HEADER === */
+header {
+  background: linear-gradient(to right, var(--pink-soft), var(--purple-light));
+  text-align: center;
+  padding: 30px 15px;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 2.5em;
+  color: #d63384;
+}
+
+header p {
+  font-size: 1.2em;
+  margin-top: 10px;
+}
+
+/* === MAIN CONTENT === */
+main {
+  padding: 20px;
+}
+
+section {
+  background-color: white;
+  border-radius: 25px;
+  padding: 20px;
+  padding-top: 30px;
+  margin: 20px auto;
+  max-width: 800px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  color: #d63384;
+  text-align: center;
+  font-size: 2em;
+  margin-bottom: 15px;
+}
+
+/* === QUOTE === */
+.quote {
+  font-style: italic;
+  font-size: 1.4em;
+  text-align: center;
+  margin: 20px auto;
+  min-height: 60px;
+}
+
+/* === BUTTON === */
+.cute-button {
+  background-color: #ff85c1;
+  border: none;
+  padding: 12px 24px;
+  color: white;
+  font-weight: bold;
+  font-size: 1.1em;
+  border-radius: 30px;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  display: block;
+  margin: 20px auto;
+}
+
+.cute-button:hover {
+  background-color: #ff69b4;
+  transform: scale(1.05);
+}
+
+/* === IMAGE CONTAINER === */
+.image-container {
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+  aspect-ratio: 16 / 9;
+  margin: 0 auto;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  background-color: #fefefe; /* fallback warna latar */
+}
+
+.image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  z-index: 0;
+  transition: opacity 1s ease-in-out;
+  border-radius: 20px;
+}
+
+.image-container img.active {
+  opacity: 1;
+  z-index: 1;
+}
+
+.daily-motivation {
+  font-style: italic;
+  font-size: 1.4em;
+  text-align: center;
+  margin: 20px auto;
+  min-height: 60px;
+}
+#audio-player {
+  display: none;
+}
+
+/* === FOOTER === */
+footer {
+  text-align: center;
+  padding: 20px;
+  background-color: #fce4ec;
+  color: #555;
+  font-size: 1.1em;
+}
+
+/* === ANIMATIONS === */
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animated-bounce {
+  animation: bounce 2s infinite;
+}
+
+/* === RESPONSIVE DESIGN === */
+@media (max-width: 768px) {
+  header h1 {
+    font-size: 2em;
+  }
+
+  h2 {
+    font-size: 1.5em;
+  }
+
+  section {
+    padding: 15px;
+    margin: 10px;
+  }
+
+  .image-container {
+    aspect-ratio: 4 / 3;
+  }
+}
