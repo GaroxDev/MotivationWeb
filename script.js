@@ -84,14 +84,17 @@ function updateSongDisplay() {
 prevSongBtn.addEventListener("click", () => {
   currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
   updateSongDisplay();
+  bgMusic.play().catch(() => {});
 });
 
 nextSongBtn.addEventListener("click", () => {
   currentSongIndex = (currentSongIndex + 1) % songs.length;
   updateSongDisplay();
+  bgMusic.play().catch(() => {});
 });
 
 playSongBtn.addEventListener("click", () => {
+  updateSongDisplay();
   bgMusic.play().catch(() => {
     alert("Klik layar terlebih dahulu agar suara bisa diputar di perangkatmu.");
   });
