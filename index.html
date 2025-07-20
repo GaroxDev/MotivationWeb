@@ -9,6 +9,10 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script>
+      emailjs.init("s3M7TdqeFLQYzazeX");
+    </script>
   </head>
   <body>
     <header class="animated-bounce">
@@ -17,6 +21,20 @@
     </header>
 
     <main>
+      <section id="music-player">
+        <h2>🎵 Pilih Lagu Kesukaanmu 🎵</h2>
+        <div class="song-title">
+          🎶 <span id="song-title">Lesung Pipi</span>
+        </div>
+        <div class="music-controls">
+          <button id="prev-song" class="cute-button">⏮️ Sebelumnya</button>
+          <button id="play-song" class="cute-button">▶️ Mainkan</button>
+          <button id="pause-song" class="cute-button">⏸️ Pause</button>
+          <button id="next-song" class="cute-button">⏭️ Berikutnya</button>
+        </div>
+        <audio id="bg-music" loop></audio>
+      </section>
+
       <section id="quotes">
         <h2>🌟 Kutipan Inspiratif 🌟</h2>
         <blockquote id="quote-display" class="quote"></blockquote>
@@ -25,39 +43,20 @@
 
       <section id="images">
         <h2>✨ Gambar Pemandangan ✨</h2>
+        <p class="image-text">
+          Ada pemandangan bagus lohh, siapa tau kamu suka 😄
+        </p>
         <div class="image-container">
-          <img
-            src="https://i2.wp.com/blog.tripcetera.com/id/wp-content/uploads/2020/10/pantai-tanjung-kelayang.jpg"
-            alt="Gambar 1"
-            class="active"
-          />
-          <img
-            src="https://i2.wp.com/blog.tripcetera.com/id/wp-content/uploads/2020/10/pulau-derawan.jpg"
-            alt="Gambar 2"
-          />
-          <img src="Beach.jpg" alt="Gambar 3" />
-          <img src="Forest.jpg" alt="Gambar 4" />
-          <img
-            src="https://i2.wp.com/blog.tripcetera.com/id/wp-content/uploads/2020/10/Danau-Toba-edited.jpg"
-            alt="Gambar 5"
-          />
-          <img src="Sunset.jpg" alt="Gambar 6" />
-          <img
-            src="https://i2.wp.com/blog.tripcetera.com/id/wp-content/uploads/2020/10/pura-uluwatu-bali.jpg"
-            alt="Gambar 7"
-          />
-          <img
-            src="https://i2.wp.com/blog.tripcetera.com/id/wp-content/uploads/2020/10/gunung-rinjani.jpg"
-            alt="Gambar 8"
-          />
-          <img
-            src="https://i2.wp.com/blog.tripcetera.com/id/wp-content/uploads/2020/10/wae-rebo-labuan-bajo.jpg"
-            alt="Gambar 9"
-          />
-          <img
-            src="https://i2.wp.com/blog.tripcetera.com/id/wp-content/uploads/2019/10/kawah-ijen-2.jpg"
-            alt="Gambar 10"
-          />
+          <img src="img/Gambar 1.jpg" alt="Gambar 1" class="active" />
+          <img src="img/Gambar 2.jpg" alt="Gambar 2" />
+          <img src="img/Gambar 3.jpg" alt="Gambar 3" />
+          <img src="img/Gambar 4.jpg" alt="Gambar 4" />
+          <img src="img/Gambar 5.jpg" alt="Gambar 5" />
+          <img src="img/Gambar 6.jpg" alt="Gambar 6" />
+          <img src="img/Gambar 7.jpg" alt="Gambar 7" />
+          <img src="img/Gambar 8.jpg" alt="Gambar 8" />
+          <img src="img/Gambar 9.jpg" alt="Gambar 9" />
+          <img src="img/Gambar 10.jpg" alt="Gambar 10" />
         </div>
       </section>
 
@@ -69,12 +68,30 @@
           kamu impikan. 🌸
         </p>
       </section>
-    </main>
 
-    <audio id="bg-music" autoplay loop>
-      <source src="Lesung Pipi.mp3" type="audio/mpeg" />
-      Browser kamu tidak mendukung audio.
-    </audio>
+      <section id="curhat-form">
+        <h2>📝 Ada Cerita Apa Kamu Hari Ini ??? 📝</h2>
+        <form id="story-form">
+          <input
+            type="text"
+            id="name"
+            name="name"
+            placeholder="Nama kamu"
+            required
+          />
+
+          <textarea
+            id="message"
+            name="message"
+            placeholder="Ceritanya disini ya cantikkk! 😊"
+            rows="5"
+            required
+          ></textarea>
+          <button type="submit" class="cute-button">Kirim Ceritamu 💌</button>
+        </form>
+        <p id="status-message"></p>
+      </section>
+    </main>
 
     <footer>
       <p>

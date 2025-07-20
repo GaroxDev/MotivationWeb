@@ -1,3 +1,4 @@
+// Kutipan motivasi
 const quotes = [
   "Percayalah kamu bisa, dan kamu sudah setengah jalan. - Theodore Roosevelt",
   "Kamu adalah alasan aku tersenyum setiap hari.",
@@ -15,73 +16,114 @@ const quotes = [
   "Kesuksesan tidak akan datang sendiri. Kamu harus mencarinya.",
   "Semakin keras kamu berusaha, semakin besar kepuasan saat kamu mencapainya.",
   "Percayalah, hari buruk tidak akan berlangsung lama.",
-  "Tersenyumlah, karena senyummu adalah senyumku juga.",
-  "Jangan pernah meremehkan kekuatan dari sebuah senyuman.",
+  "Tersenyumlah, Jangan pernah meremehkan kekuatan dari sebuah senyuman, karena senyummu adalah senyumku juga.",
 ];
 
 const quoteDisplay = document.getElementById("quote-display");
 const newQuoteButton = document.getElementById("new-quote");
 
-function typeWriter(text, element, speed = 40) {
-  element.innerHTML = "";
-  let i = 0;
-  function type() {
-    if (i < text.length) {
-      element.innerHTML += text.charAt(i);
-      i++;
-      setTimeout(type, speed);
+function getRandomQuote() {
+  const randomIndex = Math.floor(Math.random() * quotes.length);
+  return quotes[randomIndex];
+}
+
+function showQuoteTypingEffect(quote) {
+  let index = 0;
+  quoteDisplay.textContent = "";
+  const interval = setInterval(() => {
+    quoteDisplay.textContent += quote[index];
+    index++;
+    if (index >= quote.length) {
+      clearInterval(interval);
     }
-  }
-  type();
+  }, 50);
 }
 
 newQuoteButton.addEventListener("click", () => {
-  const random = quotes[Math.floor(Math.random() * quotes.length)];
-  typeWriter(random, quoteDisplay);
+  const quote = getRandomQuote();
+  showQuoteTypingEffect(quote);
 });
 
-// Tampilkan kutipan awal saat halaman dimuat
 window.addEventListener("DOMContentLoaded", () => {
-  typeWriter(quotes[0], quoteDisplay);
+  showQuoteTypingEffect(getRandomQuote());
 });
 
-// Ganti gambar otomatis
-const images = document.querySelectorAll("#images img");
-let currentIndex = 0;
+// Gambar otomatis berganti
+const images = document.querySelectorAll(".image-container img");
+let currentImage = 0;
 
-function showNextImage() {
-  images[currentIndex].classList.remove("active");
-  currentIndex = (currentIndex + 1) % images.length;
-  images[currentIndex].classList.add("active");
+function changeImage() {
+  images[currentImage].classList.remove("active");
+  currentImage = (currentImage + 1) % images.length;
+  images[currentImage].classList.add("active");
 }
 
-setInterval(showNextImage, 4000); // ganti setiap 4 detik
+setInterval(changeImage, 4000); // Ganti gambar tiap 4 detik
+
+// Musik player
+const songs = [
+  { title: "Lesung Pipi", file: "music/Lesung Pipi.mp3" },
+  { title: "Nanti Kita seperti Ini", file: "music/Nanti Kita seperti Ini.mp3" },
+];
+
+let currentSongIndex = 0;
+
+const songTitleEl = document.getElementById("song-title");
+const bgMusic = document.getElementById("bg-music");
+const prevSongBtn = document.getElementById("prev-song");
+const nextSongBtn = document.getElementById("next-song");
+const playSongBtn = document.getElementById("play-song");
+const pauseSongBtn = document.getElementById("pause-song");
+
+function updateSongDisplay() {
+  const song = songs[currentSongIndex];
+  songTitleEl.textContent = song.title;
+  bgMusic.src = song.file;
+}
+
+prevSongBtn.addEventListener("click", () => {
+  currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+  updateSongDisplay();
+});
+
+nextSongBtn.addEventListener("click", () => {
+  currentSongIndex = (currentSongIndex + 1) % songs.length;
+  updateSongDisplay();
+});
+
+playSongBtn.addEventListener("click", () => {
+  bgMusic.play().catch(() => {
+    alert("Klik layar terlebih dahulu agar suara bisa diputar di perangkatmu.");
+  });
+});
+
+pauseSongBtn.addEventListener("click", () => {
+  bgMusic.pause();
+});
 
 window.addEventListener("DOMContentLoaded", () => {
-  const bgMusic = document.getElementById("bg-music");
+  updateSongDisplay();
+});
+//Sesi Curhat
+const form = document.getElementById("story-form");
+const statusMessage = document.getElementById("status-message");
 
-  // Coba mainkan saat load — browser akan blok kalau belum interaksi
-  const tryPlay = () => {
-    const playPromise = bgMusic.play();
-    if (playPromise !== undefined) {
-      playPromise
-        .then(() => {
-          console.log("Autoplay dimulai");
-        })
-        .catch(() => {
-          console.log("Autoplay gagal — menunggu interaksi user");
-        });
-    }
-  };
+form.addEventListener("submit", function (e) {
+  e.preventDefault();
 
-  tryPlay();
-
-  // Jika autoplay gagal, coba lagi setelah klik pertama user
-  document.addEventListener(
-    "click",
-    () => {
-      tryPlay();
-    },
-    { once: true }
-  );
+  emailjs
+    .send("service_7jny6tq", "template_9sw8pme", {
+      name: form.name.value,
+      message: form.message.value,
+    })
+    .then(
+      () => {
+        statusMessage.textContent = "Pesanmu sudah terkirim! 💌";
+        form.reset();
+      },
+      (error) => {
+        statusMessage.textContent = "Gagal mengirim. Coba lagi ya 😢";
+        console.error("EmailJS Error:", error);
+      }
+    );
 });
