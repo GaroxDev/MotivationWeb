@@ -605,8 +605,41 @@ function updateNames(recipientName, senderName, customMsg) {
   }
 }
 
-// === ENCODING / DECODING SHAREABLE LINK PARAMETERS ===
-function encodeMessage(str) {
+// === ENCODING / DECODING SHAREABLE LINK PARAMETERS WITH COMPRESSION ===
+async function compressString(str) {
+  if (!str) return "";
+  try {
+    if (typeof CompressionStream !== "undefined") {
+      const stream = new Blob([str]).stream().pipeThrough(new CompressionStream("deflate-raw"));
+      const buffer = await new Response(stream).arrayBuffer();
+      const bytes = new Uint8Array(buffer);
+      let binString = "";
+      bytes.forEach((b) => (binString += String.fromCharCode(b)));
+      return "c~" + btoa(binString).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+    }
+  } catch (e) {}
+  return encodeMessageFallback(str);
+}
+
+async function decompressString(str) {
+  if (!str) return "";
+  try {
+    if (str.startsWith("c~") && typeof DecompressionStream !== "undefined") {
+      let base64 = str.slice(2).replace(/-/g, "+").replace(/_/g, "/");
+      while (base64.length % 4 !== 0) {
+        base64 += "=";
+      }
+      const binString = atob(base64);
+      const bytes = Uint8Array.from(binString, (c) => c.charCodeAt(0));
+      const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream("deflate-raw"));
+      const buffer = await new Response(stream).arrayBuffer();
+      return new TextDecoder().decode(buffer);
+    }
+  } catch (e) {}
+  return decodeMessageFallback(str);
+}
+
+function encodeMessageFallback(str) {
   if (!str) return "";
   try {
     const bytes = new TextEncoder().encode(str);
@@ -618,10 +651,11 @@ function encodeMessage(str) {
   }
 }
 
-function decodeMessage(str) {
+function decodeMessageFallback(str) {
   if (!str) return "";
   try {
-    let base64 = str.replace(/-/g, "+").replace(/_/g, "/");
+    let cleanStr = str.startsWith("c~") ? str.slice(2) : str;
+    let base64 = cleanStr.replace(/-/g, "+").replace(/_/g, "/");
     while (base64.length % 4 !== 0) {
       base64 += "=";
     }
@@ -648,19 +682,44 @@ function decodeLinkParams(encodedStr) {
   }
 }
 
-function buildShareableUrl(to, from, msg, lang) {
+async function getShortUrl(fullUrl) {
+  try {
+    const response = await fetch("https://cleanuri.com/api/v1/shorten", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: "url=" + encodeURIComponent(fullUrl)
+    });
+    if (response.ok) {
+      const data = await response.json();
+      if (data && data.result_url) return data.result_url;
+    }
+  } catch (e) {}
+
+  try {
+    const response = await fetch(`https://clck.ru/--?url=${encodeURIComponent(fullUrl)}`);
+    if (response.ok) {
+      const text = await response.text();
+      if (text && text.startsWith("http")) return text.trim();
+    }
+  } catch (e) {}
+
+  return fullUrl;
+}
+
+async function buildShareableUrl(to, from, msg, lang) {
   const currentUrl = new URL(window.location.href);
   const searchParams = new URLSearchParams();
 
   if (to) searchParams.set("to", to);
   if (from) searchParams.set("from", from);
-  if (msg) searchParams.set("msg", encodeMessage(msg));
+  if (msg) searchParams.set("msg", await compressString(msg));
   if (lang && lang !== "id") searchParams.set("lang", lang);
 
-  return `${currentUrl.origin}${currentUrl.pathname}?${searchParams.toString()}`;
+  const fullUrl = `${currentUrl.origin}${currentUrl.pathname}?${searchParams.toString()}`;
+  return await getShortUrl(fullUrl);
 }
 
-function checkUrlParamsAndInit() {
+async function checkUrlParamsAndInit() {
   document.title = "Motivation Web";
   const urlParams = new URLSearchParams(window.location.search);
   const linkGenSection = document.getElementById("link-generator");
@@ -669,7 +728,7 @@ function checkUrlParamsAndInit() {
   let sender = urlParams.get("from");
   let langParam = urlParams.get("lang");
   let rawMsg = urlParams.get("msg") || urlParams.get("message") || urlParams.get("m");
-  let msgParam = rawMsg ? decodeMessage(rawMsg) : null;
+  let msgParam = rawMsg ? await decompressString(rawMsg) : null;
 
   // Support for payload ?d= parameter (from previous version)
   if (!recipient && urlParams.has("d")) {
@@ -753,7 +812,7 @@ if (welcomeForm) {
 }
 
 if (btnCopyWebLink) {
-  btnCopyWebLink.addEventListener("click", () => {
+  btnCopyWebLink.addEventListener("click", async () => {
     const recipientVal = inputRecipient.value.trim();
     const senderVal = inputSender.value.trim();
     const motivationVal = inputMotivation ? inputMotivation.value.trim() : "";
@@ -764,7 +823,7 @@ if (btnCopyWebLink) {
       return;
     }
 
-    const shareableUrl = buildShareableUrl(recipientVal, senderVal, motivationVal, currentLang);
+    const shareableUrl = await buildShareableUrl(recipientVal, senderVal, motivationVal, currentLang);
     copyToClipboard(shareableUrl, recipientVal, modalShareStatus);
   });
 }
@@ -776,7 +835,7 @@ const customMotivationInput = document.getElementById("custom-motivation-input")
 const shareStatus = document.getElementById("share-status");
 
 if (generateBtn) {
-  generateBtn.addEventListener("click", () => {
+  generateBtn.addEventListener("click", async () => {
     const targetName = targetNameInput.value.trim();
     const senderName = senderNameInput.value.trim();
     const customMotivation = customMotivationInput ? customMotivationInput.value.trim() : "";
@@ -787,7 +846,7 @@ if (generateBtn) {
       return;
     }
 
-    const shareableUrl = buildShareableUrl(targetName, senderName, customMotivation, currentLang);
+    const shareableUrl = await buildShareableUrl(targetName, senderName, customMotivation, currentLang);
     copyToClipboard(shareableUrl, targetName, shareStatus);
   });
 }
