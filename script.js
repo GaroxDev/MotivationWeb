@@ -559,23 +559,21 @@ let currentMotivation = "";
 function updateNames(recipientName, senderName, customMsg) {
   document.title = "Motivation Web";
 
-  if (recipientName) currentRecipient = recipientName.trim();
-  if (senderName) currentSender = senderName.trim();
-  if (customMsg !== undefined && customMsg !== null) currentMotivation = customMsg.trim();
+  if (recipientName !== undefined && recipientName !== null && recipientName.trim() !== "") {
+    currentRecipient = recipientName.trim();
+  }
+  if (senderName !== undefined && senderName !== null && senderName.trim() !== "") {
+    currentSender = senderName.trim();
+  }
+  if (customMsg !== undefined && customMsg !== null) {
+    currentMotivation = customMsg.trim();
+  }
 
   const defaultRecipient = currentLang === "en" ? "Someone" : "Seseorang";
   const defaultSender = "Maulana Rizwan Ahmad";
 
   const displayRecipient = currentRecipient || defaultRecipient;
   const displaySender = currentSender || defaultSender;
-
-  document.querySelectorAll(".recipient-name").forEach((el) => {
-    el.textContent = displayRecipient;
-  });
-
-  document.querySelectorAll(".sender-name").forEach((el) => {
-    el.textContent = displaySender;
-  });
 
   const motivationParagraph = document.getElementById("motivation-paragraph");
   if (motivationParagraph) {
@@ -598,6 +596,14 @@ function updateNames(recipientName, senderName, customMsg) {
       footerText.innerHTML = `Dibuat dengan penuh cinta <span id="sender-text">dari <span class="sender-name">${displaySender}</span></span> untuk <span class="recipient-name">${displayRecipient}</span> agar harimu selalu cerah dan penuh semangat! ❤️`;
     }
   }
+
+  document.querySelectorAll(".recipient-name").forEach((el) => {
+    el.textContent = displayRecipient;
+  });
+
+  document.querySelectorAll(".sender-name").forEach((el) => {
+    el.textContent = displaySender;
+  });
 
   const storyMessageInput = document.getElementById("message");
   if (storyMessageInput) {
@@ -823,11 +829,15 @@ const inputMotivation = document.getElementById("input-motivation");
 if (welcomeForm) {
   welcomeForm.addEventListener("submit", (e) => {
     e.preventDefault();
-    const recipientVal = inputRecipient ? inputRecipient.value.trim() : "";
-    const senderVal = inputSender ? inputSender.value.trim() : "";
-    const motivationVal = inputMotivation ? inputMotivation.value.trim() : "";
+    try {
+      const recipientVal = inputRecipient ? inputRecipient.value.trim() : "";
+      const senderVal = inputSender ? inputSender.value.trim() : "";
+      const motivationVal = inputMotivation ? inputMotivation.value.trim() : "";
 
-    updateNames(recipientVal, senderVal, motivationVal);
+      updateNames(recipientVal, senderVal, motivationVal);
+    } catch (err) {
+      console.error("Error updating names on welcome form submit:", err);
+    }
 
     if (welcomeModal) {
       welcomeModal.style.display = "none";
