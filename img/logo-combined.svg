@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradComb" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e6f7ff"/>
+      <stop offset="100%" stop-color="#cce4ff"/>
+    </linearGradient>
+    <linearGradient id="sunGradComb" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#ffb703"/>
+      <stop offset="100%" stop-color="#ffd166"/>
+    </linearGradient>
+    <linearGradient id="blueGradComb" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00b4d8"/>
+      <stop offset="100%" stop-color="#0077b6"/>
+    </linearGradient>
+    <linearGradient id="wingGradComb" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#0284c7"/>
+    </linearGradient>
+  </defs>
+  <!-- Background Card -->
+  <rect width="512" height="512" rx="120" fill="url(#bgGradComb)"/>
+  
+  <!-- 1. Rising Sun Rays & Half Sun behind top of heart -->
+  <g stroke="url(#sunGradComb)" stroke-width="12" stroke-linecap="round">
+    <line x1="256" y1="85" x2="256" y2="55"/>
+    <line x1="190" y1="100" x2="175" y2="75"/>
+    <line x1="322" y1="100" x2="337" y2="75"/>
+    <line x1="130" y1="140" x2="108" y2="125"/>
+    <line x1="382" y1="140" x2="404" y2="125"/>
+  </g>
+  <path d="M 170 160 A 86 86 0 0 1 342 160 Z" fill="url(#sunGradComb)"/>
+
+  <!-- 2. Wings on left & right -->
+  <path d="M 235 410 C 130 360 60 270 60 190 C 60 130 110 110 150 140 C 180 160 200 195 225 250 C 160 210 110 200 95 250 C 115 270 155 275 225 310 Z" 
+        fill="url(#wingGradComb)"/>
+  <path d="M 277 410 C 382 360 452 270 452 190 C 452 130 402 110 362 140 C 332 160 312 195 287 250 C 352 210 402 200 417 250 C 397 270 357 275 287 310 Z" 
+        fill="url(#wingGradComb)"/>
+
+  <!-- 3. Central Heart with Stylized M -->
+  <g transform="translate(0, 30)">
+    <!-- Heart path -->
+    <path d="M 256 390 C 150 310 105 245 105 175 C 105 120 145 85 200 85 C 230 85 248 98 256 108 C 264 98 282 85 312 85 C 367 85 407 120 407 175 C 407 245 362 310 256 390 Z" 
+          fill="none" stroke="url(#blueGradComb)" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Central M path -->
+    <path d="M 170 255 L 212 180 L 256 225 L 300 180 L 342 255" 
+          fill="none" stroke="url(#blueGradComb)" stroke-width="26" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- 4. Glowing Sparkle Star at top right -->
+  <path d="M 375 75 Q 375 110 410 110 Q 375 110 375 145 Q 375 110 340 110 Q 375 110 375 75 Z" fill="url(#sunGradComb)"/>
+  <circle cx="315" cy="85" r="7" fill="#ffd166"/>
+</svg>

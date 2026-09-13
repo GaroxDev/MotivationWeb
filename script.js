@@ -663,6 +663,7 @@ function buildShareableUrl(to, from, msg, lang) {
 function checkUrlParamsAndInit() {
   document.title = "Motivation Web";
   const urlParams = new URLSearchParams(window.location.search);
+  const linkGenSection = document.getElementById("link-generator");
 
   let recipient = urlParams.get("to") || urlParams.get("name");
   let sender = urlParams.get("from");
@@ -687,9 +688,11 @@ function checkUrlParamsAndInit() {
 
   if (recipient || msgParam) {
     if (welcomeModal) welcomeModal.style.display = "none";
+    if (linkGenSection) linkGenSection.style.display = "none";
     updateNames(recipient, sender, msgParam);
   } else {
     if (welcomeModal) welcomeModal.style.display = "flex";
+    if (linkGenSection) linkGenSection.style.display = "block";
   }
 
   applyLanguage(currentLang);

@@ -17,11 +17,109 @@ body {
   line-height: 1.6;
 }
 
+/* === TOP FIXED NAVIGATION & BRAND LOGO === */
+.fixed-brand-logo {
+  position: fixed;
+  top: 15px;
+  left: 20px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 6px 16px 6px 10px;
+  border-radius: 30px;
+  box-shadow: 0 4px 15px rgba(0, 119, 182, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+  cursor: pointer;
+  user-select: none;
+}
+
+.fixed-brand-logo:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 6px 20px rgba(0, 180, 216, 0.3);
+  background: rgba(255, 255, 255, 0.98);
+}
+
+.fixed-brand-logo img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 5px rgba(0, 119, 182, 0.2));
+}
+
+.fixed-brand-logo .brand-text {
+  font-family: "Fredoka", sans-serif;
+  font-weight: 600;
+  font-size: 0.95em;
+  color: #0077b6;
+  white-space: nowrap;
+}
+
+.top-controls {
+  position: fixed;
+  top: 15px;
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+  gap: 8px;
+  margin: 0 !important;
+}
+
+.top-controls .cute-button {
+  margin: 0 !important;
+  height: 40px;
+  padding: 0 16px;
+  font-size: 0.9em;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Dark Mode adaptation for Fixed Brand Logo */
+body.dark-mode .fixed-brand-logo {
+  background: rgba(30, 41, 59, 0.85);
+  border-color: rgba(56, 189, 248, 0.25);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.35);
+}
+
+body.dark-mode .fixed-brand-logo .brand-text {
+  color: #38bdf8;
+}
+
 /* === HEADER === */
 header {
   background: linear-gradient(to right, var(--blue-soft), var(--blue-light));
   text-align: center;
-  padding: 30px 15px;
+  padding: 50px 15px 30px 15px;
+}
+
+.logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.main-logo-img {
+  width: 76px;
+  height: 76px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 12px rgba(0, 119, 182, 0.25));
+  animation: logoFloat 3.5s ease-in-out infinite alternate;
+}
+
+@keyframes logoFloat {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  100% {
+    transform: translateY(-8px) rotate(2deg);
+  }
 }
 
 header h1 {
