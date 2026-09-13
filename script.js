@@ -274,7 +274,7 @@ function applyLanguage(lang) {
   const sNameIn = document.getElementById("sender-name-input");
   if (sNameIn) sNameIn.placeholder = t.sender_name_ph;
 
-  updateNames(currentRecipient, currentSender);
+  updateNames(currentRecipient, currentSender, currentMotivation);
   showQuoteTypingEffect(getRandomQuote());
 
   const langToggleBtn = document.getElementById("lang-toggle-btn");
@@ -706,17 +706,63 @@ async function getShortUrl(fullUrl) {
   return fullUrl;
 }
 
+// === ONLINE MESSAGE STORAGE FOR ~9-10 CHAR MSG CODE ===
+async function saveMessageOnline(msgText) {
+  if (!msgText) return "";
+  try {
+    const body = new URLSearchParams();
+    body.append("content", msgText);
+    body.append("expiry_days", "365");
+
+    const res = await fetch("https://dpaste.com/api/", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: body.toString()
+    });
+
+    if (res.ok) {
+      const url = await res.text();
+      const match = url.trim().match(/dpaste\.com\/([a-zA-Z0-9]+)/);
+      if (match && match[1]) {
+        return match[1];
+      }
+    }
+  } catch (e) {}
+
+  return await compressString(msgText);
+}
+
+async function getMessageOnline(msgCode) {
+  if (!msgCode) return "";
+
+  if (/^[a-zA-Z0-9]{8,12}$/.test(msgCode)) {
+    try {
+      const res = await fetch(`https://dpaste.com/${msgCode}.txt`);
+      if (res.ok) {
+        const text = await res.text();
+        if (text && !text.includes("404 Not Found") && !text.includes("Error")) {
+          return text.trim();
+        }
+      }
+    } catch (e) {}
+  }
+
+  return await decompressString(msgCode);
+}
+
 async function buildShareableUrl(to, from, msg, lang) {
   const baseUrl = "https://garoxdev.github.io/MotivationWeb/";
   const searchParams = new URLSearchParams();
 
   if (to) searchParams.set("to", to);
   if (from) searchParams.set("from", from);
-  if (msg) searchParams.set("msg", await compressString(msg));
+  if (msg) {
+    const code = await saveMessageOnline(msg);
+    searchParams.set("msg", code);
+  }
   if (lang && lang !== "id") searchParams.set("lang", lang);
 
-  const fullUrl = `${baseUrl}?${searchParams.toString()}`;
-  return await getShortUrl(fullUrl);
+  return `${baseUrl}?${searchParams.toString()}`;
 }
 
 async function checkUrlParamsAndInit() {
@@ -728,7 +774,7 @@ async function checkUrlParamsAndInit() {
   let sender = urlParams.get("from");
   let langParam = urlParams.get("lang");
   let rawMsg = urlParams.get("msg") || urlParams.get("message") || urlParams.get("m");
-  let msgParam = rawMsg ? await decompressString(rawMsg) : null;
+  let msgParam = rawMsg ? await getMessageOnline(rawMsg) : null;
 
   // Support for payload ?d= parameter (from previous version)
   if (!recipient && urlParams.has("d")) {
@@ -745,6 +791,8 @@ async function checkUrlParamsAndInit() {
     currentLang = langParam;
   }
 
+  applyLanguage(currentLang);
+
   if (recipient || msgParam) {
     if (welcomeModal) welcomeModal.style.display = "none";
     if (linkGenSection) linkGenSection.style.display = "none";
@@ -754,7 +802,6 @@ async function checkUrlParamsAndInit() {
     if (linkGenSection) linkGenSection.style.display = "block";
   }
 
-  applyLanguage(currentLang);
   updateSongDisplay();
 }
 
