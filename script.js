@@ -82,6 +82,9 @@ const dictionary = {
     add_img_modal_desc: "Pilih foto dari HP/Laptop atau masukkan link URL foto",
     upload_img_label: "Upload Foto:",
     save_img_btn: "Simpan Foto 🖼️",
+    delete_song_btn: "🗑️ Hapus Lagu",
+    delete_quote_btn: "🗑️ Hapus Kutipan",
+    delete_img_btn: "🗑️ Hapus Foto",
     motivation_header: "💬 Motivasi For You 💬",
     curhat_header: "📝 Ada Cerita Apa Kamu Hari Ini ??? 📝",
     send_story_btn: "Kirim Ceritamu 💌",
@@ -129,6 +132,9 @@ const dictionary = {
     add_img_modal_desc: "Choose photos from your device or enter an image URL",
     upload_img_label: "Upload Photo:",
     save_img_btn: "Save Photo 🖼️",
+    delete_song_btn: "🗑️ Delete Song",
+    delete_quote_btn: "🗑️ Delete Quote",
+    delete_img_btn: "🗑️ Delete Photo",
     motivation_header: "💬 Motivation For You 💬",
     curhat_header: "📝 How Was Your Day Today ??? 📝",
     send_story_btn: "Send Your Story 💌",
@@ -218,6 +224,26 @@ if (addQuoteForm) {
   });
 }
 
+// Delete Quote Handler
+const deleteQuoteBtn = document.getElementById("delete-quote-btn");
+if (deleteQuoteBtn) {
+  deleteQuoteBtn.addEventListener("click", () => {
+    const activeQuotes = currentLang === "en" ? quotesEN : quotesID;
+    if (activeQuotes.length <= 1) {
+      alert(currentLang === "en" ? "Cannot delete: At least one quote is required!" : "Tidak bisa menghapus: Minimal harus ada 1 kutipan!");
+      return;
+    }
+    const currentText = quoteDisplay ? quoteDisplay.textContent : "";
+    const index = activeQuotes.indexOf(currentText);
+    if (index !== -1) {
+      activeQuotes.splice(index, 1);
+    } else {
+      activeQuotes.pop();
+    }
+    showQuoteTypingEffect(getRandomQuote());
+  });
+}
+
 // Language Switcher Function
 function applyLanguage(lang) {
   currentLang = lang;
@@ -288,6 +314,7 @@ const prevImgBtn = document.getElementById("prev-img-btn");
 const nextImgBtn = document.getElementById("next-img-btn");
 const openAddImgBtn = document.getElementById("open-add-img");
 const closeAddImgBtn = document.getElementById("close-add-img");
+const deleteImgBtn = document.getElementById("delete-img-btn");
 const addImgModal = document.getElementById("add-img-modal");
 const addImgForm = document.getElementById("add-img-form");
 const imgFileInput = document.getElementById("img-file-input");
@@ -317,6 +344,23 @@ if (openAddImgBtn) {
 if (closeAddImgBtn) {
   closeAddImgBtn.addEventListener("click", () => {
     addImgModal.style.display = "none";
+  });
+}
+
+if (deleteImgBtn) {
+  deleteImgBtn.addEventListener("click", () => {
+    const allImages = getSliderImages();
+    if (allImages.length <= 1) {
+      alert(currentLang === "en" ? "Cannot delete: At least one photo is required!" : "Tidak bisa menghapus: Minimal harus ada 1 foto!");
+      return;
+    }
+    const activeImg = allImages[currentImageIndex];
+    if (activeImg) {
+      activeImg.remove();
+    }
+    const remaining = getSliderImages();
+    showImage(currentImageIndex % remaining.length);
+    startImageSlider();
   });
 }
 
@@ -368,6 +412,7 @@ const prevSongBtn = document.getElementById("prev-song");
 const nextSongBtn = document.getElementById("next-song");
 const playSongBtn = document.getElementById("play-song");
 const pauseSongBtn = document.getElementById("pause-song");
+const deleteSongBtn = document.getElementById("delete-song-btn");
 
 const openAddSongBtn = document.getElementById("open-add-song");
 const closeAddSongBtn = document.getElementById("close-add-song");
@@ -413,6 +458,20 @@ if (playSongBtn) {
 if (pauseSongBtn) {
   pauseSongBtn.addEventListener("click", () => {
     bgMusic.pause();
+  });
+}
+
+if (deleteSongBtn) {
+  deleteSongBtn.addEventListener("click", () => {
+    if (songs.length <= 1) {
+      alert(currentLang === "en" ? "Cannot delete: At least one song is required!" : "Tidak bisa menghapus: Minimal harus ada 1 lagu!");
+      return;
+    }
+    const removedSong = songs[currentSongIndex];
+    songs.splice(currentSongIndex, 1);
+    currentSongIndex = currentSongIndex % songs.length;
+    updateSongDisplay();
+    bgMusic.play().catch(() => {});
   });
 }
 
@@ -546,13 +605,81 @@ function updateNames(recipientName, senderName, customMsg) {
   }
 }
 
+// === ENCODING / DECODING SHAREABLE LINK PARAMETERS ===
+function encodeMessage(str) {
+  if (!str) return "";
+  try {
+    const bytes = new TextEncoder().encode(str);
+    let binString = "";
+    bytes.forEach((b) => (binString += String.fromCharCode(b)));
+    return btoa(binString).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  } catch (e) {
+    return str;
+  }
+}
+
+function decodeMessage(str) {
+  if (!str) return "";
+  try {
+    let base64 = str.replace(/-/g, "+").replace(/_/g, "/");
+    while (base64.length % 4 !== 0) {
+      base64 += "=";
+    }
+    const binString = atob(base64);
+    const bytes = Uint8Array.from(binString, (c) => c.charCodeAt(0));
+    return new TextDecoder().decode(bytes);
+  } catch (e) {
+    return str;
+  }
+}
+
+function decodeLinkParams(encodedStr) {
+  try {
+    let base64 = encodedStr.replace(/-/g, "+").replace(/_/g, "/");
+    while (base64.length % 4 !== 0) {
+      base64 += "=";
+    }
+    const binString = atob(base64);
+    const bytes = Uint8Array.from(binString, (c) => c.charCodeAt(0));
+    const jsonStr = new TextDecoder().decode(bytes);
+    return JSON.parse(jsonStr);
+  } catch (e) {
+    return null;
+  }
+}
+
+function buildShareableUrl(to, from, msg, lang) {
+  const currentUrl = new URL(window.location.href);
+  const searchParams = new URLSearchParams();
+
+  if (to) searchParams.set("to", to);
+  if (from) searchParams.set("from", from);
+  if (msg) searchParams.set("msg", encodeMessage(msg));
+  if (lang && lang !== "id") searchParams.set("lang", lang);
+
+  return `${currentUrl.origin}${currentUrl.pathname}?${searchParams.toString()}`;
+}
+
 function checkUrlParamsAndInit() {
   document.title = "Motivation Web";
   const urlParams = new URLSearchParams(window.location.search);
-  const recipient = urlParams.get("to") || urlParams.get("name");
-  const sender = urlParams.get("from");
-  const langParam = urlParams.get("lang");
-  const msgParam = urlParams.get("msg") || urlParams.get("message");
+
+  let recipient = urlParams.get("to") || urlParams.get("name");
+  let sender = urlParams.get("from");
+  let langParam = urlParams.get("lang");
+  let rawMsg = urlParams.get("msg") || urlParams.get("message") || urlParams.get("m");
+  let msgParam = rawMsg ? decodeMessage(rawMsg) : null;
+
+  // Support for payload ?d= parameter (from previous version)
+  if (!recipient && urlParams.has("d")) {
+    const decoded = decodeLinkParams(urlParams.get("d"));
+    if (decoded) {
+      recipient = decoded.to || decoded.name;
+      sender = decoded.from;
+      msgParam = decoded.msg || decoded.message;
+      langParam = decoded.lang;
+    }
+  }
 
   if (langParam && (langParam === "en" || langParam === "id")) {
     currentLang = langParam;
@@ -634,14 +761,7 @@ if (btnCopyWebLink) {
       return;
     }
 
-    const currentUrl = new URL(window.location.href);
-    const searchParams = new URLSearchParams();
-    searchParams.set("to", recipientVal);
-    if (senderVal) searchParams.set("from", senderVal);
-    if (motivationVal) searchParams.set("msg", motivationVal);
-    if (currentLang !== "id") searchParams.set("lang", currentLang);
-
-    const shareableUrl = `${currentUrl.origin}${currentUrl.pathname}?${searchParams.toString()}`;
+    const shareableUrl = buildShareableUrl(recipientVal, senderVal, motivationVal, currentLang);
     copyToClipboard(shareableUrl, recipientVal, modalShareStatus);
   });
 }
@@ -664,14 +784,7 @@ if (generateBtn) {
       return;
     }
 
-    const currentUrl = new URL(window.location.href);
-    const searchParams = new URLSearchParams();
-    searchParams.set("to", targetName);
-    if (senderName) searchParams.set("from", senderName);
-    if (customMotivation) searchParams.set("msg", customMotivation);
-    if (currentLang !== "id") searchParams.set("lang", currentLang);
-
-    const shareableUrl = `${currentUrl.origin}${currentUrl.pathname}?${searchParams.toString()}`;
+    const shareableUrl = buildShareableUrl(targetName, senderName, customMotivation, currentLang);
     copyToClipboard(shareableUrl, targetName, shareStatus);
   });
 }
@@ -717,5 +830,6 @@ function fallbackCopy(text, recipientName, statusElement) {
   }
   document.body.removeChild(textArea);
 }
+
 
 

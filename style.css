@@ -130,6 +130,18 @@ form {
   background-color: #0096c7;
 }
 
+.danger-button {
+  background-color: #ff4d6d;
+  color: white;
+  border-radius: 30px !important;
+  box-shadow: 0 4px 10px rgba(255, 77, 109, 0.3);
+}
+
+.danger-button:hover {
+  background-color: #d90429;
+  box-shadow: 0 6px 14px rgba(217, 4, 41, 0.4);
+}
+
 .button-group .cute-button,
 .music-controls .cute-button,
 .modal-buttons .cute-button {
