@@ -707,7 +707,7 @@ async function getShortUrl(fullUrl) {
 }
 
 async function buildShareableUrl(to, from, msg, lang) {
-  const currentUrl = new URL(window.location.href);
+  const baseUrl = "https://garoxdev.github.io/MotivationWeb/";
   const searchParams = new URLSearchParams();
 
   if (to) searchParams.set("to", to);
@@ -715,7 +715,7 @@ async function buildShareableUrl(to, from, msg, lang) {
   if (msg) searchParams.set("msg", await compressString(msg));
   if (lang && lang !== "id") searchParams.set("lang", lang);
 
-  const fullUrl = `${currentUrl.origin}${currentUrl.pathname}?${searchParams.toString()}`;
+  const fullUrl = `${baseUrl}?${searchParams.toString()}`;
   return await getShortUrl(fullUrl);
 }
 
