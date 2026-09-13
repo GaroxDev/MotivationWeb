@@ -825,13 +825,18 @@ const inputMotivation = document.getElementById("input-motivation");
 if (welcomeForm) {
   welcomeForm.addEventListener("submit", (e) => {
     e.preventDefault();
-    const recipientVal = inputRecipient.value.trim();
-    const senderVal = inputSender.value.trim();
+    const recipientVal = inputRecipient ? inputRecipient.value.trim() : "";
+    const senderVal = inputSender ? inputSender.value.trim() : "";
     const motivationVal = inputMotivation ? inputMotivation.value.trim() : "";
 
-    if (recipientVal || motivationVal) {
-      updateNames(recipientVal, senderVal, motivationVal);
+    updateNames(recipientVal, senderVal, motivationVal);
+
+    if (welcomeModal) {
       welcomeModal.style.display = "none";
+    }
+
+    if (bgMusic) {
+      bgMusic.play().catch(() => {});
     }
   });
 }
