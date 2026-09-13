@@ -682,28 +682,6 @@ function decodeLinkParams(encodedStr) {
   }
 }
 
-async function getShortUrl(fullUrl) {
-  try {
-    const response = await fetch("https://cleanuri.com/api/v1/shorten", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: "url=" + encodeURIComponent(fullUrl)
-    });
-    if (response.ok) {
-      const data = await response.json();
-      if (data && data.result_url) return data.result_url;
-    }
-  } catch (e) {}
-
-  try {
-    const response = await fetch(`https://clck.ru/--?url=${encodeURIComponent(fullUrl)}`);
-    if (response.ok) {
-      const text = await response.text();
-      if (text && text.startsWith("http")) return text.trim();
-    }
-  } catch (e) {}
-
-  return fullUrl;
 }
 
 // === ONLINE MESSAGE STORAGE FOR ~9-10 CHAR MSG CODE ===
