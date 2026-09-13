@@ -3,7 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Motivasi Untukmu, Zasqia!</title>
+    <link rel="icon" type="image/svg+xml" href="/img/Icon.png" />
+    <title>Motivation Web</title>
     <link
       href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap"
       rel="stylesheet"
@@ -15,38 +16,123 @@
     </script>
   </head>
   <body>
+    <!-- Control Buttons (Theme & Language Switcher) -->
+    <div class="top-controls">
+      <button id="theme-toggle-btn" class="cute-button theme-btn">🌙 Dark</button>
+      <button id="lang-toggle-btn" class="cute-button lang-btn">🌐 ID | EN</button>
+    </div>
+
+    <!-- Welcome Screen / Modal jika belum ada nama di URL -->
+    <div id="welcome-modal" class="modal-overlay">
+      <div class="modal-content">
+        <h2 data-i18n="welcome_title">💖 Motivation Web 💖</h2>
+        <p data-i18n="welcome_sub">Tulis nama orang tersayang yang ingin kamu beri motivasi!</p>
+        <form id="welcome-form">
+          <input
+            type="text"
+            id="input-recipient"
+            placeholder="Nama Orang Tersayang (cth: Eleanor Vivienne Carter)"
+            required
+          />
+          <input
+            type="text"
+            id="input-sender"
+            placeholder="Nama Kamu / Pengirim (cth: Rizwan)"
+          />
+          <textarea
+            id="input-motivation"
+            placeholder="Pesan Motivasi Khusus (opsional - tulis ucapan manismu)"
+            rows="3"
+          ></textarea>
+          <div class="modal-buttons">
+            <button type="submit" id="btn-open-web" class="cute-button" data-i18n="btn_open_web">
+              Buka Web Motivasi ✨
+            </button>
+            <button type="button" id="btn-copy-web-link" class="cute-button secondary-button" data-i18n="btn_copy_web_link">
+              Salin Link untuk Si Dia 💌
+            </button>
+          </div>
+        </form>
+        <p id="modal-share-status"></p>
+      </div>
+    </div>
+
     <header class="animated-bounce">
-      <h1>Hai Zasqia Andini! ✨</h1>
-      <p>Kamu luar biasa, tetap semangat dan terus bersinar! ❤️</p>
+      <h1><span data-i18n="greeting_prefix">Hai</span> <span class="recipient-name">Seseorang</span>! ✨</h1>
+      <p data-i18n="header_sub">Kamu luar biasa, tetap semangat dan terus bersinar! ❤️</p>
     </header>
 
     <main>
       <section id="music-player">
-        <h2>🎵 Pilih Lagu Kesukaanmu 🎵</h2>
+        <h2 data-i18n="music_header">🎵 Pilih Lagu Kesukaanmu 🎵</h2>
         <div class="song-title">
           🎶 <span id="song-title">Lesung Pipi</span>
         </div>
         <div class="music-controls">
-          <button id="prev-song" class="cute-button">⏮️ Sebelumnya</button>
-          <button id="play-song" class="cute-button">▶️ Mainkan</button>
-          <button id="pause-song" class="cute-button">⏸️ Pause</button>
-          <button id="next-song" class="cute-button">⏭️ Berikutnya</button>
+          <button id="prev-song" class="cute-button" data-i18n="prev_song">⏮️ Sebelumnya</button>
+          <button id="play-song" class="cute-button" data-i18n="play_song">▶️ Mainkan</button>
+          <button id="pause-song" class="cute-button" data-i18n="pause_song">⏸️ Pause</button>
+          <button id="next-song" class="cute-button" data-i18n="next_song">⏭️ Berikutnya</button>
+        </div>
+        <div class="button-group">
+          <button id="open-add-song" class="cute-button secondary-button" data-i18n="add_song_btn">➕ Tambah Lagu Kesukaan</button>
         </div>
         <audio id="bg-music" loop></audio>
       </section>
 
+      <!-- Modal Tambah Lagu -->
+      <div id="add-song-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+          <h2 data-i18n="add_song_modal_title">🎵 Tambah Lagu Kesukaan 🎵</h2>
+          <p data-i18n="add_song_modal_desc">Pilih file audio dari HP/Laptop kamu atau masukkan link audio (.mp3)</p>
+          <form id="add-song-form">
+            <label style="display: block; text-align: left; font-weight: bold; margin-bottom: 5px; color: #0077b6;" data-i18n="upload_label">Upload File Audio:</label>
+            <input type="file" id="song-file-input" accept="audio/*" style="background: white;" />
+
+            <div style="margin: 10px 0; font-weight: bold; color: #888;" data-i18n="or_text">--- Atau ---</div>
+
+            <input type="text" id="song-title-input" placeholder="Judul Lagu (opsional)" />
+            <input type="url" id="song-url-input" placeholder="Link Audio URL (https://...mp3)" />
+
+            <div class="modal-buttons">
+              <button type="submit" class="cute-button" data-i18n="save_song_btn">Simpan & Putar Lagu 🎶</button>
+              <button type="button" id="close-add-song" class="cute-button secondary-button" data-i18n="cancel_btn">Batal</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
       <section id="quotes">
-        <h2>🌟 Kutipan Inspiratif 🌟</h2>
+        <h2 data-i18n="quotes_header">🌟 Kutipan Inspiratif 🌟</h2>
         <blockquote id="quote-display" class="quote"></blockquote>
-        <button id="new-quote" class="cute-button">💖 Kutipan Baru 💖</button>
+        <div class="button-group">
+          <button id="new-quote" class="cute-button" data-i18n="new_quote_btn">💖 Kutipan Baru 💖</button>
+          <button id="open-add-quote" class="cute-button secondary-button" data-i18n="add_quote_btn">➕ Tambah Kutipan</button>
+        </div>
       </section>
 
+      <!-- Modal Tambah Kutipan -->
+      <div id="add-quote-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+          <h2 data-i18n="add_quote_modal_title">🌟 Tambah Kutipan Baru 🌟</h2>
+          <p data-i18n="add_quote_modal_desc">Tulis kata-kata bijak atau motivasi favoritmu!</p>
+          <form id="add-quote-form">
+            <textarea id="quote-text-input" placeholder="Tulis kata-kata bijak disini..." rows="3" required></textarea>
+            <input type="text" id="quote-author-input" placeholder="Penulis / Tokoh (opsional, cth: Albert Einstein)" />
+            <div class="modal-buttons">
+              <button type="submit" class="cute-button" data-i18n="save_quote_btn">Simpan & Tampilkan 💖</button>
+              <button type="button" id="close-add-quote" class="cute-button secondary-button" data-i18n="cancel_btn">Batal</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
       <section id="images">
-        <h2>✨ Gambar Pemandangan ✨</h2>
-        <p class="image-text">
+        <h2 data-i18n="images_header">✨ Gambar Pemandangan & Kenangan ✨</h2>
+        <p class="image-text" data-i18n="images_text">
           Ada pemandangan bagus lohh, siapa tau kamu suka 😄
         </p>
-        <div class="image-container">
+        <div class="image-container" id="image-slider">
           <img src="img/Gambar 1.jpg" alt="Gambar 1" class="active" />
           <img src="img/Gambar 2.jpg" alt="Gambar 2" />
           <img src="img/Gambar 3.jpg" alt="Gambar 3" />
@@ -58,23 +144,49 @@
           <img src="img/Gambar 9.jpg" alt="Gambar 9" />
           <img src="img/Gambar 10.jpg" alt="Gambar 10" />
         </div>
+        <div class="button-group">
+          <button id="prev-img-btn" class="cute-button" data-i18n="prev_img">⬅️ Foto Sebelumnya</button>
+          <button id="next-img-btn" class="cute-button" data-i18n="next_img">Foto Berikutnya ➡️</button>
+          <button id="open-add-img" class="cute-button secondary-button" data-i18n="add_img_btn">📸 Tambah Foto Kamu</button>
+        </div>
       </section>
 
+      <!-- Modal Tambah Foto -->
+      <div id="add-img-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+          <h2 data-i18n="add_img_modal_title">📸 Tambah Foto Kamu 📸</h2>
+          <p data-i18n="add_img_modal_desc">Pilih foto dari HP/Laptop atau masukkan link URL foto</p>
+          <form id="add-img-form">
+            <label style="display: block; text-align: left; font-weight: bold; margin-bottom: 5px; color: #0077b6;" data-i18n="upload_img_label">Upload Foto:</label>
+            <input type="file" id="img-file-input" accept="image/*" multiple style="background: white;" />
+
+            <div style="margin: 10px 0; font-weight: bold; color: #888;" data-i18n="or_text">--- Atau ---</div>
+
+            <input type="url" id="img-url-input" placeholder="Link URL Foto (https://...jpg/png)" />
+
+            <div class="modal-buttons">
+              <button type="submit" class="cute-button" data-i18n="save_img_btn">Simpan Foto 🖼️</button>
+              <button type="button" id="close-add-img" class="cute-button secondary-button" data-i18n="cancel_btn">Batal</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
       <section id="motivation">
-        <h2>💬 Motivasi For You 💬</h2>
-        <p class="daily-motivation">
-          Hai Cantikk, aku tau kamu lagi berjuang untuk masa depanmu. Semangat
+        <h2 data-i18n="motivation_header">💬 Motivasi For You 💬</h2>
+        <p class="daily-motivation" id="motivation-paragraph">
+          Hai <span class="recipient-name">Seseorang</span>, aku tau kamu lagi berjuang untuk masa depanmu. Semangat
           ya, kamu hebat, ga banyak orang yang mau menghargai perjuangan kamu
           kan? gapapa, putar lagi rodanya sekuat mungkin supaya kamu bisa berada
           di posisi yang kamu mau. Jangan patah semangat ya, kamu ga sendirian
           kok, aku bakal selalu ada di samping kamu, kamu pasti bisa ngelewatin
-          semuanya, jaga kesehatan ya cantikk. I will always support you in all
+          semuanya, jaga kesehatan ya <span class="recipient-name">seseorang</span>. I will always support you in all
           situations. 🌸🫶🏻
         </p>
       </section>
 
       <section id="curhat-form">
-        <h2>📝 Ada Cerita Apa Kamu Hari Ini ??? 📝</h2>
+        <h2 data-i18n="curhat_header">📝 Ada Cerita Apa Kamu Hari Ini ??? 📝</h2>
         <form id="story-form">
           <input
             type="text"
@@ -87,22 +199,49 @@
           <textarea
             id="message"
             name="message"
-            placeholder="Ceritanya disini ya cantikkk! 😊"
+            placeholder="Ceritanya disini ya! 😊"
             rows="5"
             required
           ></textarea>
-          <button type="submit" class="cute-button">Kirim Ceritamu 💌</button>
+          <button type="submit" class="cute-button" data-i18n="send_story_btn">Kirim Ceritamu 💌</button>
         </form>
         <p id="status-message"></p>
+      </section>
+
+      <section id="link-generator">
+        <h2 data-i18n="link_gen_header">🎁 Buat Link Motivasi Khusus 🎁</h2>
+        <p style="text-align: center; font-size: 1.1em; margin-bottom: 15px;" data-i18n="link_gen_desc">
+          Ingin mengirimkan ucapan ini ke seseorang? Masukkan namanya di bawah lalu salin linknya!
+        </p>
+        <div class="generator-box">
+          <input
+            type="text"
+            id="target-name"
+            placeholder="Nama Penerima (misal: Budi / Cantik)"
+            required
+          />
+          <input
+            type="text"
+            id="sender-name-input"
+            placeholder="Nama Kamu / Pengirim (opsional)"
+          />
+          <textarea
+            id="custom-motivation-input"
+            placeholder="Pesan Motivasi Khusus (opsional - tulis ucapan manismu disini)"
+            rows="3"
+          ></textarea>
+          <button id="generate-btn" class="cute-button" data-i18n="copy_link_btn">Salin Link Khusus 🔗</button>
+        </div>
+        <p id="share-status"></p>
       </section>
     </main>
 
     <footer>
-      <p>
-        Dibuat dengan penuh cinta untuk Zasqia Andini agar harimu selalu cerah
+      <p id="footer-text">
+        Dibuat dengan penuh cinta <span id="sender-text">dari <span class="sender-name">Maulana Rizwan Ahmad</span></span> untuk <span class="recipient-name">Seseorang</span> agar harimu selalu cerah
         dan penuh semangat! ❤️
       </p>
-      <p>© 2025 Maulana Rizwan Ahmad. All Rights Reserved.</p>
+      <p>©2025 <span>GaroxXiz</span>. All Rights Reserved.</p>
     </footer>
 
     <script src="script.js"></script>
