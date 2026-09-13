@@ -682,8 +682,6 @@ function decodeLinkParams(encodedStr) {
   }
 }
 
-}
-
 // === ONLINE MESSAGE STORAGE FOR ~9-10 CHAR MSG CODE ===
 async function saveMessageOnline(msgText) {
   if (!msgText) return "";
